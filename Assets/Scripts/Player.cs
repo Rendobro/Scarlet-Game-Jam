@@ -82,15 +82,13 @@ public class Player : MonoBehaviour, IHasHealth, IBuffTarget
     public void Attack(IHasHealth target)
     {
         target.TakeDamage(damage);
-        if (lifestealEnabled && counter % 5 = 0)
-        {
-            Heal(1);
-        }
+        if (lifestealEnabled && counter >= 5) Heal(1);
+
     }
     public void Heal(int amount) => health = Mathf.Min(health + amount, maxHealth);
     public int GetHealth() => health;
     public int GetMaxHealth() => maxHealth;
-    public void BuffSpeed(float speed) => this.speed += speed; 
+    public void BuffSpeed(float speed) => this.speed += speed;
     public void SetShield(int shieldAmount) => shield = shieldAmount;
     public void BuffDamage(int damageAmount) => damage += damageAmount;
 }
