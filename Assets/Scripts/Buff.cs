@@ -43,50 +43,146 @@ public class Buff
         };
     }
 
-    public void Enable()
-    {
-        enabled = true;
-    }
-
-    public void Disable()
-    {
-        enabled = false;
-    }
-
+    public void Enable() => enabled = true;
+    public void Disable() => enabled = false;
     public void Activate()
     {
-        float defaultSpeed = 5f;
-        enabled = true;
+        float defaultSpeedBuff = 5f;
+        float defaultDamageBuff = 5f;
+        float defaultShieldBuff = 3f;
         switch (buffType)
         {
             case BuffType.Regen:
-                
+                Player.Instance.EnableRegen();
                 break;
             case BuffType.Speed:
-                foreach (IBuffTarget target in GameObject
+                foreach (IBuffFriendly target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffTarget>())
+                .OfType<IBuffFriendly>())
                 {
                     target.BuffSpeed(defaultSpeed);
                 }
                 break;
             case BuffType.Damage:
-
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.BuffDamage(defaultSpeedBuff);
+                }
                 break;
             case BuffType.AOEAbility:
-
+                Player.Instance.EnableAOE();
                 break;
             case BuffType.RicochetAbility:
-
+                Player.Instance.EnableRicochet();
                 break;
             case BuffType.EnemyDebuff:
-
+                Player.Instance.EnableEnemyDebuff();
                 break;
             case BuffType.Shield:
-
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.SetShield(defaultShielddBuff);
+                }
                 break;
             case BuffType.Lifesteal:
-
+                Player.Instance.EnableLifesteal();
+                break;
+            default:
+                Debug.LogError("Buff type not recognized");
+                break;
+        }
+    }
+    public void Activate(float strength)
+    {
+        if (!enabled)
+        {
+            Debug.LogError("Buff is disabled, cannot activate");
+            return;
+        }
+        if (strength <= 0)
+        {
+            Debug.LogError("Strength must be a positive value./n Using default strength values instead.");
+            Activate();
+            return;
+        }
+        switch (buffType)
+        {
+            case BuffType.Speed:
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.BuffSpeed(strength);
+                }
+                break;
+            case BuffType.Damage:
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.BuffDamage(strength);
+                }
+                break;
+            case BuffType.Shield:
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.SetShield(strength);
+                }
+                break;
+            default:
+                Debug.LogError("Buff type not recognized or doesn't support strength parameter");
+                break;
+        }
+    }
+    public void Deactivate()
+    {
+        Disable();
+        switch (buffType)
+        {
+            case BuffType.Regen:
+                Player.Instance.DisableRegen();
+                break;
+            case BuffType.Speed:
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.ResetSpeed();
+                }
+                break;
+            case BuffType.Damage:
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.ResetDamage();
+                }
+                break;
+            case BuffType.AOEAbility:
+                Player.Instance.DisableAOE();
+                break;
+            case BuffType.RicochetAbility:
+                Player.Instance.DisableRicochet();
+                break;
+            case BuffType.EnemyDebuff:
+                Player.Instance.DisableEnemyDebuff();
+                break;
+            case BuffType.Shield:
+                foreach (IBuffFriendly target in GameObject
+                .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .OfType<IBuffFriendly>())
+                {
+                    target.ResetShield();
+                }
+                break;
+            case BuffType.Lifesteal:
+                Player.Instance.DisableLifesteal();
                 break;
             default:
                 Debug.LogError("Buff type not recognized");

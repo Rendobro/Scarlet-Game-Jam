@@ -6,5 +6,4 @@ public interface IHasHealth
     void Heal(int amount);
     int GetHealth();
     int GetMaxHealth();
-
 }
