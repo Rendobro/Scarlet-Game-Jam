@@ -6,7 +6,7 @@ public class Goblin : Enemy
 
     public override void TakeDamage(int damage)
     {
-        if (shield <= 0)
+        if (shield <= 0) // Shield takes damage first, but if shield is destroyed goblin takes damage
         {
             health -= damage;
         }
@@ -14,5 +14,7 @@ public class Goblin : Enemy
         {
             shield -= damage;
         }
+
+        Died(); // Checks if enemy died
     }
 }
