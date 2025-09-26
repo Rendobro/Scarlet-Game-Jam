@@ -13,12 +13,9 @@ public class Skeleton : Enemy
         protected set
         {
             if (value <= 0) Perish();
-            else health = value;
+            else _health = value;
         }
     }
-
-    public override void TakeDamage(int damage) => Health -= damage;
-
     public override void Attack(IHasHealth target)
     {
         Vector3 targetPos = (target as MonoBehaviour).transform.position;
@@ -31,4 +28,7 @@ public class Skeleton : Enemy
             Debug.Log($"Target {(target as MonoBehaviour).gameObject.name} out of range");
         }
     }
+    public override void ResetSpeed() => Speed = 4f;
+    public override void ResetDamage() => Damage = 3;
+    
 }

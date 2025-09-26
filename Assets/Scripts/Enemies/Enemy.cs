@@ -1,16 +1,33 @@
 using UnityEngine;
-public abstract class Enemy : MonoBehaviour, IHasHealth
+public abstract class Enemy : MonoBehaviour, IHasHealth, IBuffable
 {
     public static event System.Action OnEnemyDeath;
 
-    // Make sure if you want to implement a shield 
-    // so damage doesnt immediately go through health
-    // to do that on your own otherwise you really 
-    // do not need to
-    public abstract void TakeDamage(int damage);
+    
+    // Buff related methods
+    public virtual void BuffSpeed(float speedAmount) => Speed += speedAmount;
+    public virtual void SetShield(int shieldAmount) => Shield += shieldAmount;
+    public virtual void BuffDamage(int damageAmount) => Damage += damageAmount;
+    public virtual void BuffPierce(bool pierceAmount) => Pierce += damageAmount;
+
+    // set these to their default values in the class
+    public virtual void ResetSpeed() => Speed = 1f;
+    public virtual void ResetDamage() => Damage = 1;
+    public virtual void ResetShield() => Shield = 0;
+    public virtual void ResetPierce() => Pierce = 1;
+
+    // Health related methods
+    public virtual void TakeDamage(int damage)
+    {
+        int overflowDamage = Mathf.Max(Damage - Shield, 0);
+        shield = Mathf.Max(Shield - Damage, 0);
+        Health = Mathf.Max(Health - overflowDamage, 0);
+    }
     public void Heal(int amount) => Health = Mathf.Min(Health + amount, MaxHealth);
     public int GetHealth() => Health;
     public int GetMaxHealth() => MaxHealth;
+
+    // Enemy actions
     public virtual void Attack(IHasHealth target)
     {
         target.TakeDamage(Damage);
@@ -21,7 +38,6 @@ public abstract class Enemy : MonoBehaviour, IHasHealth
         Vector3 direction = (targetPos - transform.position).normalized;
         transform.position += direction * Speed * Time.deltaTime;
     }
-
     public void Perish()
     {
         OnEnemyDeath?.Invoke();
@@ -29,6 +45,8 @@ public abstract class Enemy : MonoBehaviour, IHasHealth
         Destroy(gameObject);
     }
     [SerializeField] protected int health = 20;
+
+    // Enemy properties
     public virtual int Health
     {
         get => health;
@@ -46,5 +64,16 @@ public abstract class Enemy : MonoBehaviour, IHasHealth
 
     [SerializeField] protected float speed = 1f;
     public virtual float Speed { get => speed; protected set => speed = value; }
+
+    [SerializeField] protected int shield = 0;
+    public virtual int Shield 
+    { 
+        get => shield; 
+        protected set => shield = (int)Mathf.Max(0,value);
+        
+    }
+    [SerializeField] protected int pierce = 1;
+    public virtual int Pierce { get => pierce; protected set => pierce = (int)Mathf.Max(1,value); }
+
 
 }

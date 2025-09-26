@@ -2,10 +2,8 @@ using UnityEngine;
 
 public class Timer
 {
-#pragma warning disable IDE0044 // Add readonly modifier
-    private float duration;   // how long the timer runs
-#pragma warning restore IDE0044 // Add readonly modifier
-    private float endTime;    // when the timer should end
+    private readonly float duration; 
+    private float endTime; 
     private bool running;
 
     public bool IsRunning => running;
@@ -25,10 +23,8 @@ public class Timer
     }
 
     // Stop the timer early
-    public void Stop()
-    {
-        running = false;
-    }
+    public void Stop() => running = false;
+    
 
     // Call this once per frame if you want to auto-stop
     public void Update()

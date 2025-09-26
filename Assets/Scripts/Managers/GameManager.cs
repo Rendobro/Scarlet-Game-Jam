@@ -3,13 +3,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Yet to be implemented
-
-
-
+    private boolean endlessEnabled = 0;
     private int roundNumber = 0;
     private int enemiesRemaining = 0;
-    private int enemiesToSpawn = 5;
+    [SerializeField] private int enemiesToSpawn = 5;
     private int enemiesKilled = 0;
     [SerializeField] private int roundDuration = 60; // seconds
     [SerializeField] private float spawnInterval = 2f; // seconds
@@ -29,5 +26,14 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
+    }
+    public void NextRound()
+    {
+        roundNumber++;
+    }
+
+    private void SpawnEnemies(int numEnemies, float buffMultiplier)
+    {
+        
     }
 }

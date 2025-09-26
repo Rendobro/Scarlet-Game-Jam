@@ -14,21 +14,15 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     private bool enemyDebuffEnabled = false;
     private bool regenEnabled = false;
     private bool healFlag = false;
-#pragma warning disable IDE0044 // Add readonly modifier
     private float healInterval = 8f;
-#pragma warning restore IDE0044 // Add readonly modifier
     [SerializeField] private int health = 5;
-#pragma warning disable IDE0044 // Add readonly modifier
     [SerializeField] private int maxHealth = 5;
-#pragma warning restore IDE0044 // Add readonly modifier
     [SerializeField] private int shield = 0;
     [SerializeField] private float speed = 5;
     [SerializeField] private int damage = 1;
     [SerializeField] private int counter = 0;
     Timer timer = new Timer(8f);
-#pragma warning disable IDE0044 // Add readonly modifier
     List<Buff> playerBuffs = Buff.initializeBuffs();
-#pragma warning restore IDE0044 // Add readonly modifier
 
     // Awake is called before Start, but not after a scene is loaded, so only use if 
     // you are able to initialize something before the scene is loaded
@@ -46,7 +40,6 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     // just means it defaults to private
     void Start()
     {
-
         timer.Start();
         foreach (Buff buff in playerBuffs)
         {
@@ -57,17 +50,17 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     void Update()
     {
         timer.Update();
-        if (timer.IsFinished)
+        if (timer.IsFinished && !healFlag)
         {
             timer.Start();
             healFlag = true;
         }
         if (regenEnabled && health < maxHealth && healFlag)
-        {
-            healFlag = false;
-            Heal(1);
-            Debug.Log("Player healed 1 health. Current health: " + health);
-        }
+            {
+                healFlag = false;
+                Heal(1);
+                Debug.Log("Player healed 1 health. Current health: " + health);
+            }
     }
 
     // Self explanatory enabling and disable buffs

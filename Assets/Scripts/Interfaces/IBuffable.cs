@@ -1,4 +1,4 @@
-public interface IBuffFriendly
+public interface IBuffable : IHasHealth
 {
     void Heal(int healAmount);
     void BuffSpeed(float speed);
