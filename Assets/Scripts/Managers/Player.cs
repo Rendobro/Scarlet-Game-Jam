@@ -6,6 +6,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     // using this "Instance" is a common way to implement 
     // the singleton pattern in Unity, you can google it
     public static Player Instance { get; private set; }
+    public Transform _t;
     public static event Action OnPlayerDeath;
     private bool aoeEnabled = false;
     private bool lifestealEnabled = false;
@@ -21,26 +22,25 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     [SerializeField] private float speed = 5;
     [SerializeField] private int damage = 1;
     [SerializeField] private int counter = 0;
-    Timer timer = new Timer(8f);
+    Timer healTimer = new Timer(8f);
     List<Buff> playerBuffs = Buff.initializeBuffs();
 
     // Awake is called before Start, but not after a scene is loaded, so only use if 
     // you are able to initialize something before the scene is loaded
     private void Awake()
     {
-        timer = new Timer(healInterval);
+        healTimer = new Timer(healInterval);
         if (Instance != null && Instance != this)
             Destroy(this);
         else
             Instance = this;
     }
 
-
     // Note: in C# if theres no "public" or "private" for methods like start and update it 
     // just means it defaults to private
     void Start()
     {
-        timer.Start();
+        healTimer.Start();
         foreach (Buff buff in playerBuffs)
         {
             Debug.Log("Activated buff: " + buff.buffType);
@@ -49,30 +49,57 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     }
     void Update()
     {
-        timer.Update();
-        if (timer.IsFinished && !healFlag)
+        HealTimerUpdater();
+        RegenChecker();
+        MoveDetector();
+        ShootDetector();
+    }
+    private void MoveDetector()
+    {
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
+        Vector3 movement = new Vector3(moveX, moveY, 0f);
+        _t.position += movement * speed * Time.deltaTime;
+    }
+    private void ShootDetector()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        Vector3 dir = (mousePos - transform.position).normalized;
+        // Send projectile in direction until it collides with an enemy, wall, or screen edge
+    }
+    private void HealTimerUpdater()
+    {
+        healTimer.Update();
+        if (healTimer.IsFinished && !healFlag)
         {
-            timer.Start();
+            healTimer.Start();
             healFlag = true;
         }
+    }
+    private void RegenChecker()
+    {
         if (regenEnabled && health < maxHealth && healFlag)
-            {
-                healFlag = false;
-                Heal(1);
-                Debug.Log("Player healed 1 health. Current health: " + health);
-            }
+        {
+            healFlag = false;
+            Heal(1);
+            Debug.Log("Player healed 1 health. Current health: " + health);
+        }
     }
 
     // Self explanatory enabling and disable buffs
     // However, only use Buff objects and Activate() !!!
+    public bool IsAOEEnabled() => aoeEnabled;
     public void EnableAOE() => aoeEnabled = true;
     public void DisableAOE() => aoeEnabled = false;
+    public bool IsLifestealEnabled() => lifestealEnabled;
     public void EnableLifesteal() => lifestealEnabled = true;
     public void DisableLifesteal() => lifestealEnabled = false;
     public void EnablePierce() => pierceEnabled = true;
     public void DisablePierce() => pierceEnabled = false;
+    public bool IsRicochetEnabled() => ricochetEnabled;
     public void EnableRicochet() => ricochetEnabled = true;
     public void DisableRicochet() => ricochetEnabled = false;
+    public bool IsEnemyDebuffEnabled() => enemyDebuffEnabled;
     public void EnableEnemyDebuff() => enemyDebuffEnabled = true;
     public void DisableEnemyDebuff() => enemyDebuffEnabled = false;
     public void EnableRegen() => regenEnabled = true;

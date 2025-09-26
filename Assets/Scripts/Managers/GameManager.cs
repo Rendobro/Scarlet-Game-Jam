@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
+    // needs to be implemented
+
+    
     private boolean endlessEnabled = 0;
     private int roundNumber = 0;
     private int enemiesRemaining = 0;
