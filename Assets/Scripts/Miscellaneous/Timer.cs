@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class Timer
 {
+#pragma warning disable IDE0044 // Add readonly modifier
     private float duration;   // how long the timer runs
+#pragma warning restore IDE0044 // Add readonly modifier
     private float endTime;    // when the timer should end
     private bool running;
 
@@ -33,6 +35,7 @@ public class Timer
     {
         if (running && Time.time >= endTime)
         {
+            Debug.Log("Timer finished");
             running = false;
         }
     }

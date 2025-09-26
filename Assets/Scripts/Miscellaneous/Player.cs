@@ -1,33 +1,40 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
-
-public class Player : MonoBehaviour, IHasHealth, IBuffTarget
+public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
 {
     // using this "Instance" is a common way to implement 
     // the singleton pattern in Unity, you can google it
     public static Player Instance { get; private set; }
-    public static event System.Action OnPlayerDeath;
-    private boolean aoeEnabled = true;
-    private boolean lifestealEnabled = true;
-    private boolean pierceEnabled = true;
-    private boolean ricochetEnabled = true;
-    private boolean enemyDebuffEnabled = true;
-    private boolean regenEnabled = true;
-    private boolean healFlag = true;
+    public static event Action OnPlayerDeath;
+    private bool aoeEnabled = false;
+    private bool lifestealEnabled = false;
+    private bool pierceEnabled = false;
+    private bool ricochetEnabled = false;
+    private bool enemyDebuffEnabled = false;
+    private bool regenEnabled = false;
+    private bool healFlag = false;
+#pragma warning disable IDE0044 // Add readonly modifier
     private float healInterval = 8f;
-    private int health = 5;
-    private int maxHealth = 5;
-    private int shield = 0;
-    private int speed = 5;
-    private int damage = 1;
-
+#pragma warning restore IDE0044 // Add readonly modifier
+    [SerializeField] private int health = 5;
+#pragma warning disable IDE0044 // Add readonly modifier
+    [SerializeField] private int maxHealth = 5;
+#pragma warning restore IDE0044 // Add readonly modifier
+    [SerializeField] private int shield = 0;
+    [SerializeField] private float speed = 5;
+    [SerializeField] private int damage = 1;
+    [SerializeField] private int counter = 0;
+    Timer timer = new Timer(8f);
+#pragma warning disable IDE0044 // Add readonly modifier
     List<Buff> playerBuffs = Buff.initializeBuffs();
+#pragma warning restore IDE0044 // Add readonly modifier
 
     // Awake is called before Start, but not after a scene is loaded, so only use if 
     // you are able to initialize something before the scene is loaded
     private void Awake()
     {
+        timer = new Timer(healInterval);
         if (Instance != null && Instance != this)
             Destroy(this);
         else
@@ -39,21 +46,27 @@ public class Player : MonoBehaviour, IHasHealth, IBuffTarget
     // just means it defaults to private
     void Start()
     {
-        Timer timer = new Timer(healInterval);
+
         timer.Start();
         foreach (Buff buff in playerBuffs)
         {
+            Debug.Log("Activated buff: " + buff.buffType);
             buff.Activate();
-            Console.WriteLine("Activated buff: " + buff.buffType);
         }
     }
     void Update()
     {
         timer.Update();
+        if (timer.IsFinished)
+        {
+            timer.Start();
+            healFlag = true;
+        }
         if (regenEnabled && health < maxHealth && healFlag)
         {
             healFlag = false;
             Heal(1);
+            Debug.Log("Player healed 1 health. Current health: " + health);
         }
     }
 
@@ -77,13 +90,17 @@ public class Player : MonoBehaviour, IHasHealth, IBuffTarget
         shield = Mathf.Max(shield - damage, 0);
         health = Mathf.Max(health - overflowDamage, 0);
 
-        if (health == 0) OnPlayerDeath?.Invoke();
+        if (health <= 0) OnPlayerDeath?.Invoke();
     }
     public void Attack(IHasHealth target)
     {
         target.TakeDamage(damage);
-        if (lifestealEnabled && counter >= 5) Heal(1);
-
+        counter++;
+        if (lifestealEnabled && counter >= 5)
+        {
+            counter = 0;
+            Heal(1);
+        }
     }
     public void Heal(int amount) => health = Mathf.Min(health + amount, maxHealth);
     public int GetHealth() => health;
@@ -91,4 +108,9 @@ public class Player : MonoBehaviour, IHasHealth, IBuffTarget
     public void BuffSpeed(float speed) => this.speed += speed;
     public void SetShield(int shieldAmount) => shield = shieldAmount;
     public void BuffDamage(int damageAmount) => damage += damageAmount;
+    public void BuffPierce(bool pierce) => pierceEnabled = pierce;
+    public void ResetSpeed() => speed = 5;
+    public void ResetDamage() => damage = 1;
+    public void ResetShield() => shield = 0;
+    public void ResetPierce() => pierceEnabled = false;
 }

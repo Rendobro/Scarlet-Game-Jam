@@ -56,5 +56,11 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Scarlet Game Jam.sln"
+    "dotnet.defaultSolution": "Scarlet Game Jam.sln",
+    "cSpell.words": [
+        "Debuff",
+        "Lifesteal",
+        "Mathf",
+        "Regen"
+    ]
 }
