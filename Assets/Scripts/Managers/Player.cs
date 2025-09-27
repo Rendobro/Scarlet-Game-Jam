@@ -9,6 +9,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
     [SerializeField] private Transform _t;
     // Assign this in the editor
     [SerializeField] private GameObject bulletPrefab;
+    private ProjectileData proj;
     public static event Action OnPlayerDeath;
     private bool aoeEnabled = false;
     private bool lifestealEnabled = false;
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
     private bool healFlag = false;
     private float healInterval = 8f;
     private float shootCooldown = 0.5f;
+    private float aoeAbilityCooldown = 10f;
     [SerializeField] private int health = 5;
     [SerializeField] private int maxHealth = 5;
     [SerializeField] private int shield = 0;
@@ -27,7 +29,9 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
     [SerializeField] private int counter = 0;
     private Timer healTimer;
     private Timer shootTimer;
-    public readonly List<Buff> playerBuffs = Buff.initializeBuffs();
+    private Timer invincibilityTimer;
+    private Timer aoeAbilityTimer;
+    public List<Buff> activeBuffs { get; } = Buff.initializeBuffs();
 
     // Awake is called before Start, but not after a scene is loaded, so only use if 
     // you are able to initialize something before the scene is loaded
@@ -35,6 +39,8 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
     {
         healTimer = new Timer(healInterval);
         shootTimer = new Timer(shootCooldown);
+        aoeAbilityTimer = new Timer(aoeAbilityCooldown);
+        invincibilityTimer = new Timer(0.4f);
         if (Instance != null && Instance != this)
             Destroy(this);
         else
@@ -45,42 +51,72 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
     // just means it defaults to private
     void Start()
     {
-        _t = GameObject.FindGameObjectWithTag("Player").transform;
+
         healTimer.Start();
         shootTimer.Start();
-        foreach (Buff buff in playerBuffs)
+        invincibilityTimer.Start();
+        aoeAbilityTimer.Start();    
+        foreach (Buff buff in activeBuffs)
         {
             buff.Activate();
-            Debug.Log("Activated buff: " + buff.buffType);
         }
     }
     void Update()
     {
         HealTimerUpdater();
         ShootTimerUpdater();
+        InvincibilityTimerUpdater();
         RegenChecker();
         MoveDetector();
         ShootDetector();
+        AbilityChecker();
+        DeathChecker();
     }
+    public Transform getTransform() => _t.parent;
+    private void DeathChecker()
+    {
+        if (health <= 0)
+        {
+            OnPlayerDeath?.Invoke();
+            Debug.Log("Player has died.");
+            Destroy(gameObject);
+        }
+    }
+    private void AbilityChecker()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Buff aoeBuff = activeBuffs.Find(b => b.buffType == Buff.BuffType.AOEAbility);
+            if (aoeBuff.IsEnabled())
+            {
+                aoeBuff.Activate();
+            }
+            else
+            {
+                aoeBuff.Deactivate();
+            }
+        }
+    }
+
     private void MoveDetector()
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
         Vector3 movement = new Vector3(moveX, moveY);
-        _t.position += movement * speed * Time.deltaTime;
+        Camera.main.transform.position += movement * speed * Time.deltaTime;
     }
     private void ShootDetector()
     {
-        if ((Input.GetMouseButton(0) || Input.GetKeyDown(KeyCode.Space)) && shootTimer.IsFinished)
+        if (Input.GetButton("Fire1") && shootTimer.IsFinished)
         {
             shootTimer.Start();
-            Vector3 mousePos = Input.mousePosition;
-            Vector3 dir = (mousePos - transform.position).normalized;
+            Vector3 mousePos = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
+            mousePos.z = 0;
+            Vector3 dir = (mousePos - _t.position).normalized;
 
             // Send projectile in direction until it collides with an enemy, wall, or screen edge, or runs out of range
-            Projectile proj = new(0.5f, 10f, damage, 1, ricochetEnabled, _t, dir, bulletPrefab);
-            Debug.Log($"Player shot a projectile doing {proj.damage} damage towards {dir}");
-            ProjectileManager.Instance.SpawnProjectile(proj);
+            proj = new(6f, 10f, damage, pierce, ricochetEnabled, _t, dir, bulletPrefab);
+            ProjectileManager.Instance.ShootProjectile(proj);
         }
     }
     private void HealTimerUpdater()
@@ -103,7 +139,15 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
         }
         shootTimer.Update();
     }
-
+    private void InvincibilityTimerUpdater()
+    {
+        if (invincibilityTimer == null)
+        {
+            Debug.LogError("invincibilityTimer is not initialized!");
+            return;
+        }
+        invincibilityTimer.Update();
+    }
     private void RegenChecker()
     {
         if (regenEnabled && health < maxHealth && healFlag)
@@ -114,6 +158,30 @@ public class Player : MonoBehaviour, IHasHealth, IBuffable
         }
     }
 
+    public ProjectileData GetProjectileData() => proj;
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy") && enemyDebuffEnabled)
+        {
+            if (collision.TryGetComponent(out Enemy enemy) && invincibilityTimer.IsFinished)
+            {
+                invincibilityTimer.Start();
+                enemy.BuffDamage(-1);
+                TakeDamage(enemy.Damage);
+                Debug.Log($"Enemy {enemy.gameObject.name} attacked! Health: {health}");
+            }
+        }
+        else if (collision.CompareTag("Enemy"))
+        {
+            if (collision.TryGetComponent(out Enemy enemy) && invincibilityTimer.IsFinished)
+            {
+                invincibilityTimer.Start();
+                TakeDamage(enemy.Damage);
+                Debug.Log($"Enemy {enemy.gameObject.name} attacked! Health: {health}");
+            }
+        }
+    }
     // Self explanatory enabling and disable buffs
     // However, only use Buff objects and Activate() !!!
     public bool IsAOEEnabled() => aoeEnabled;

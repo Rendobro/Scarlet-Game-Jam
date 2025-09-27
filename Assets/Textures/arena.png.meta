@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9ac476815477f471182a1e218cd247ad
+guid: 665105582632b4089a2063c4554c2fba
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1447770631095046492
-    second: regen_1_0
+      213: -1993050390034824194
+    second: arena_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: regen_1_0
+      name: arena_0
       rect:
         serializedVersion: 2
-        x: 49
-        y: 49
-        width: 252
-        height: 222
+        x: 0
+        y: 0
+        width: 320
+        height: 320
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c51d9a6e7b3871410800000000000000
-      internalID: 1447770631095046492
+      spriteID: ef3458ada334754e0800000000000000
+      internalID: -1993050390034824194
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      regen_1_0: 1447770631095046492
+      arena_0: -1993050390034824194
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,17 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 public abstract class Enemy : MonoBehaviour, IHasHealth, IBuffable
 {
     public static event System.Action OnEnemyDeath;
-
-    
     // Buff related methods
     public virtual void BuffSpeed(float speedAmount) => Speed += speedAmount;
     public virtual void SetShield(int shieldAmount) => Shield += shieldAmount;
     public virtual void BuffDamage(int damageAmount) => Damage += damageAmount;
     public virtual void BuffPierce(int pierceAmount) => Pierce += pierceAmount;
 
+    // Buff storage
+    public List<Buff> activeBuffs { get; } = Buff.initializeBuffs();
+
     // set these to their default values in the class
-    public virtual void ResetSpeed() => Speed = 1f;
+    public virtual void ResetSpeed() => Speed = 0.7f;
     public virtual void ResetDamage() => Damage = 1;
     public virtual void ResetShield() => Shield = 0;
     public virtual void ResetPierce() => Pierce = 1;
@@ -20,7 +22,7 @@ public abstract class Enemy : MonoBehaviour, IHasHealth, IBuffable
     public virtual void TakeDamage(int damage)
     {
         int overflowDamage = Mathf.Max(Damage - Shield, 0);
-        shield = Mathf.Max(Shield - Damage, 0);
+        Shield = Mathf.Max(Shield - Damage, 0);
         Health = Mathf.Max(Health - overflowDamage, 0);
     }
     public void Heal(int amount) => Health = Mathf.Min(Health + amount, MaxHealth);
@@ -32,10 +34,11 @@ public abstract class Enemy : MonoBehaviour, IHasHealth, IBuffable
     {
         target.TakeDamage(Damage);
     }
-    public void Follow(IHasHealth target)
+    public void Follow(Transform target)
     {
-        Vector3 targetPos = (target as MonoBehaviour).transform.position;
+        Vector3 targetPos = target.transform.position;
         Vector3 direction = (targetPos - transform.position).normalized;
+        Debug.DrawRay(transform.position, direction * 5, Color.red);
         transform.position += direction * Speed * Time.deltaTime;
     }
     public void Perish()

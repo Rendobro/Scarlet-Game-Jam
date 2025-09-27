@@ -58,8 +58,10 @@
     },
     "dotnet.defaultSolution": "Scarlet Game Jam.sln",
     "cSpell.words": [
+        "Behaviour",
         "Cooldown",
         "Debuff",
+        "Lerp",
         "Lifesteal",
         "Mathf",
         "Regen"

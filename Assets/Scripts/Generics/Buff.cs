@@ -44,6 +44,7 @@ public class Buff
         };
     }
 
+    public bool IsEnabled() => enabled;
     public void Enable() => enabled = true;
     public void Disable() => enabled = false;
     public void Activate()

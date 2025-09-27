@@ -21,7 +21,7 @@ public class Goblin : Enemy
         protected set
         {
             if (value <= 0) Perish();
-            else health = value;
+            else _health = value;
         }
     }
     public override void ResetShield() => Shield = 10;

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9ac476815477f471182a1e218cd247ad
+guid: 57ac9c1e2992b4201bb4a404d0738386
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1447770631095046492
-    second: regen_1_0
+      213: -99275710592258524
+    second: life_steal_2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: regen_1_0
+      name: life_steal_2_0
       rect:
         serializedVersion: 2
         x: 49
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c51d9a6e7b3871410800000000000000
-      internalID: 1447770631095046492
+      spriteID: 42ee257644d4f9ef0800000000000000
+      internalID: -99275710592258524
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      regen_1_0: 1447770631095046492
+      life_steal_2_0: -99275710592258524
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

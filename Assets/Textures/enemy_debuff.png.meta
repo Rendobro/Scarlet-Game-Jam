@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9ac476815477f471182a1e218cd247ad
+guid: de51bd4de269641faacc5d63c81e0f1e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1447770631095046492
-    second: regen_1_0
+      213: 282325562959898506
+    second: enemy_debuff_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: regen_1_0
+      name: enemy_debuff_0
       rect:
         serializedVersion: 2
         x: 49
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c51d9a6e7b3871410800000000000000
-      internalID: 1447770631095046492
+      spriteID: a87ac3b8a950be300800000000000000
+      internalID: 282325562959898506
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      regen_1_0: 1447770631095046492
+      enemy_debuff_0: 282325562959898506
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

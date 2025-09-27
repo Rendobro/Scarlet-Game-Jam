@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public interface IBuffable : IHasHealth
 {
     void BuffSpeed(float speed);
@@ -8,4 +10,5 @@ public interface IBuffable : IHasHealth
     void ResetDamage();
     void ResetShield();
     void ResetPierce();
+    public List<Buff> activeBuffs { get; }
 }

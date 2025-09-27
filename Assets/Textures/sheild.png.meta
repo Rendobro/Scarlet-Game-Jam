@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9ac476815477f471182a1e218cd247ad
+guid: fca769a9553ce447c8c3de9cdb1105c8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1447770631095046492
-    second: regen_1_0
+      213: -6395364460193760038
+    second: sheild_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: regen_1_0
+      name: sheild_0
       rect:
         serializedVersion: 2
         x: 49
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c51d9a6e7b3871410800000000000000
-      internalID: 1447770631095046492
+      spriteID: adc3ef458e91f37a0800000000000000
+      internalID: -6395364460193760038
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      regen_1_0: 1447770631095046492
+      sheild_0: -6395364460193760038
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
