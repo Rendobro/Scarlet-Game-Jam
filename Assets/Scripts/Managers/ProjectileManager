@@ -11,9 +11,12 @@ public class ProjectileManager
 
 
     // Needs to be updated
-    public GameObject SpawnProjectile(Transform transform, Projectile projectile)
+    public GameObject SpawnProjectile(Projectile projectile)
     {
-        GameObject newProjectile = GameObject.Instantiate(projectile.prefab, transform.position, transform.rotation, projectileParent);
+        Transform parentT = projectile.parent.transform;
+        GameObject newProjectile = GameObject.Instantiate(projectile.prefab, parentT.position, parentT.rotation, projectile.parent);
+        Vector3 targetPos = newProjectile.transform.position + projectile.direction * projectile.range;
+        StartCoroutine(MoveObjLinear(newProjectile, newProjectile.transform.position, targetPos, projectile.range / projectile.speed));
         return newProjectile;
     }
 

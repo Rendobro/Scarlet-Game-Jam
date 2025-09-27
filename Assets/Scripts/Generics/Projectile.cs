@@ -1,16 +1,16 @@
-public class ProjectileData
+public class Projectile
 {
     public GameObject prefab;
     public Transform parent;
-    private float speed;
-    private float range;
-    private int damage;
-    private bool pierce;
-    private bool ricochet;
-    private Transform transform;
-    public Transform parent;
+    Vector3 direction;
+    public float speed;
+    public float range;
+    public int damage;
+    public int pierce;
+    public bool ricochet;
+    public Transform transform;
 
-    public void Projectile(float speed, float range, int damage, bool pierce, bool ricochet, Transform transform)
+    public Projectile(float speed, float range, int damage, int pierce, bool ricochet, Transform transform, Vector3 direction, GameObject prefab)
     {
         this.speed = speed;
         this.range = range;
@@ -18,6 +18,7 @@ public class ProjectileData
         this.pierce = pierce;
         this.ricochet = ricochet;
         this.transform = transform;
+        this.direction = direction;
         parent = transform.parent;
     }
 }

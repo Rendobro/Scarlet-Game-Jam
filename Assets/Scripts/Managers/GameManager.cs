@@ -6,11 +6,11 @@ public class GameManager : MonoBehaviour
 
     // needs to be implemented
 
-    
+
     private boolean endlessEnabled = 0;
     private int roundNumber = 0;
     private int enemiesRemaining = 0;
-    [SerializeField] private int enemiesToSpawn = 5;
+    [SerializeField] private Dictionary<GameObject, List<int>> enemiesToSpawn;
     private int enemiesKilled = 0;
     [SerializeField] private int roundDuration = 60; // seconds
     [SerializeField] private float spawnInterval = 2f; // seconds
@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        enemiesToSpawn = new Dictionary<GameObject, List<int>>();
+        enemiesToSpawn[enemyPrefabs[0]] = new List<int>{10,5,7,10,12};
+        enemiesToSpawn[enemyPrefabs[1]] = new List<int>{0,5,7,10,12};
+        enemiesToSpawn[enemyPrefabs[2]] = new List<int>{6,5,7,10,12};
         Debug.Log("GameManager started");
     }
     void Update()

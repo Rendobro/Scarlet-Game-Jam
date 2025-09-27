@@ -7,6 +7,8 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     // the singleton pattern in Unity, you can google it
     public static Player Instance { get; private set; }
     public Transform _t;
+    // Assign this in the editor
+    [SerializeField] private GameObject bulletPrefab;
     public static event Action OnPlayerDeath;
     private bool aoeEnabled = false;
     private bool lifestealEnabled = false;
@@ -16,6 +18,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     private bool regenEnabled = false;
     private bool healFlag = false;
     private float healInterval = 8f;
+    private float shootCooldown = 0.5f;
     [SerializeField] private int health = 5;
     [SerializeField] private int maxHealth = 5;
     [SerializeField] private int shield = 0;
@@ -23,6 +26,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     [SerializeField] private int damage = 1;
     [SerializeField] private int counter = 0;
     Timer healTimer = new Timer(8f);
+    Tiimer shootTimer = new Timer(0.5f);
     List<Buff> playerBuffs = Buff.initializeBuffs();
 
     // Awake is called before Start, but not after a scene is loaded, so only use if 
@@ -40,6 +44,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     // just means it defaults to private
     void Start()
     {
+        _t = FindGameObjectWithTag("Player").transform;
         healTimer.Start();
         foreach (Buff buff in playerBuffs)
         {
@@ -50,6 +55,7 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     void Update()
     {
         HealTimerUpdater();
+        ShootTimerUpdater();
         RegenChecker();
         MoveDetector();
         ShootDetector();
@@ -58,14 +64,20 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
-        Vector3 movement = new Vector3(moveX, moveY, 0f);
+        Vector3 movement = new Vector3(moveX, moveY);
         _t.position += movement * speed * Time.deltaTime;
     }
     private void ShootDetector()
     {
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 dir = (mousePos - transform.position).normalized;
-        // Send projectile in direction until it collides with an enemy, wall, or screen edge
+        if ((Input.GetMouseButton(0) || Input.GetButtonDown(Keycode.Space)) && shootTimer.IsFinished)
+        {
+            shootTimer.Start();
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 dir = (mousePos - transform.position).normalized;
+            // Send projectile in direction until it collides with an enemy, wall, or screen edge, or runs out of range
+            Projectile proj = new Projectile(0.5f, 10f, damage, 1, ricochetEnabled, _t, dir,bulletPrefab);
+            ProjectileManager.Instance.SpawnProjectile(proj);
+        }
     }
     private void HealTimerUpdater()
     {
@@ -75,6 +87,11 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
             healTimer.Start();
             healFlag = true;
         }
+    }
+    private void ShootTimerUpdater()
+    {
+        shootTimer.Update();
+        if (shootTimer.IsFinished) shootTimer.Start();
     }
     private void RegenChecker()
     {
