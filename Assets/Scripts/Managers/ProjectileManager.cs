@@ -1,6 +1,8 @@
-public class ProjectileManager
+using UnityEngine;
+using System.Collections;
+public class ProjectileManager : MonoBehaviour
 {
-    public static ProjectileManager Instance;
+    public static ProjectileManager Instance { get; private set; }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -14,7 +16,7 @@ public class ProjectileManager
     public GameObject SpawnProjectile(Projectile projectile)
     {
         Transform parentT = projectile.parent.transform;
-        GameObject newProjectile = GameObject.Instantiate(projectile.prefab, parentT.position, parentT.rotation, projectile.parent);
+        GameObject newProjectile = Instantiate(projectile.prefab, parentT.position, parentT.rotation, projectile.parent);
         Vector3 targetPos = newProjectile.transform.position + projectile.direction * projectile.range;
         StartCoroutine(MoveObjLinear(newProjectile, newProjectile.transform.position, targetPos, projectile.range / projectile.speed));
         return newProjectile;
@@ -30,6 +32,7 @@ public class ProjectileManager
             elapsed += Time.deltaTime;
         }
         obj.transform.position = endPos;
+        Destroy(obj);
         yield break;
     }
 }

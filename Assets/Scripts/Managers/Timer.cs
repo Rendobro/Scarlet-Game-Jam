@@ -5,10 +5,9 @@ public class Timer
     private readonly float duration; 
     private float endTime; 
     private bool running;
-
     public bool IsRunning => running;
     public float TimeLeft => Mathf.Max(0, endTime - Time.time);
-    public bool IsFinished => running && TimeLeft <= 0;
+    public bool IsFinished => !running && TimeLeft <= 0;
 
     public Timer(float seconds)
     {
@@ -20,6 +19,7 @@ public class Timer
     {
         endTime = Time.time + duration;
         running = true;
+
     }
 
     // Stop the timer early

@@ -1,8 +1,10 @@
+using UnityEngine;
+
 public class Projectile
 {
     public GameObject prefab;
     public Transform parent;
-    Vector3 direction;
+    public Vector3 direction;
     public float speed;
     public float range;
     public int damage;

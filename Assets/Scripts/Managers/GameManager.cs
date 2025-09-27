@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     // needs to be implemented
 
 
-    private boolean endlessEnabled = 0;
+    private bool endlessEnabled = false;
     private int roundNumber = 0;
     private int enemiesRemaining = 0;
     [SerializeField] private Dictionary<GameObject, List<int>> enemiesToSpawn;
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-
+        
     }
     public void NextRound()
     {

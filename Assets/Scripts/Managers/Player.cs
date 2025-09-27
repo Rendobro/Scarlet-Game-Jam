@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
+public class Player : MonoBehaviour, IHasHealth, IBuffable
 {
     // using this "Instance" is a common way to implement 
     // the singleton pattern in Unity, you can google it
     public static Player Instance { get; private set; }
-    public Transform _t;
+    [SerializeField] private Transform _t;
     // Assign this in the editor
     [SerializeField] private GameObject bulletPrefab;
     public static event Action OnPlayerDeath;
     private bool aoeEnabled = false;
     private bool lifestealEnabled = false;
-    private bool pierceEnabled = false;
     private bool ricochetEnabled = false;
     private bool enemyDebuffEnabled = false;
     private bool regenEnabled = false;
@@ -24,16 +23,18 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     [SerializeField] private int shield = 0;
     [SerializeField] private float speed = 5;
     [SerializeField] private int damage = 1;
+    [SerializeField] private int pierce = 1;
     [SerializeField] private int counter = 0;
-    Timer healTimer = new Timer(8f);
-    Tiimer shootTimer = new Timer(0.5f);
-    List<Buff> playerBuffs = Buff.initializeBuffs();
+    private Timer healTimer;
+    private Timer shootTimer;
+    public readonly List<Buff> playerBuffs = Buff.initializeBuffs();
 
     // Awake is called before Start, but not after a scene is loaded, so only use if 
     // you are able to initialize something before the scene is loaded
     private void Awake()
     {
         healTimer = new Timer(healInterval);
+        shootTimer = new Timer(shootCooldown);
         if (Instance != null && Instance != this)
             Destroy(this);
         else
@@ -44,12 +45,13 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     // just means it defaults to private
     void Start()
     {
-        _t = FindGameObjectWithTag("Player").transform;
+        _t = GameObject.FindGameObjectWithTag("Player").transform;
         healTimer.Start();
+        shootTimer.Start();
         foreach (Buff buff in playerBuffs)
         {
-            Debug.Log("Activated buff: " + buff.buffType);
             buff.Activate();
+            Debug.Log("Activated buff: " + buff.buffType);
         }
     }
     void Update()
@@ -69,30 +71,39 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     }
     private void ShootDetector()
     {
-        if ((Input.GetMouseButton(0) || Input.GetButtonDown(Keycode.Space)) && shootTimer.IsFinished)
+        if ((Input.GetMouseButton(0) || Input.GetKeyDown(KeyCode.Space)) && shootTimer.IsFinished)
         {
             shootTimer.Start();
             Vector3 mousePos = Input.mousePosition;
             Vector3 dir = (mousePos - transform.position).normalized;
+
             // Send projectile in direction until it collides with an enemy, wall, or screen edge, or runs out of range
-            Projectile proj = new Projectile(0.5f, 10f, damage, 1, ricochetEnabled, _t, dir,bulletPrefab);
+            Projectile proj = new(0.5f, 10f, damage, 1, ricochetEnabled, _t, dir, bulletPrefab);
+            Debug.Log($"Player shot a projectile doing {proj.damage} damage towards {dir}");
             ProjectileManager.Instance.SpawnProjectile(proj);
         }
     }
     private void HealTimerUpdater()
     {
-        healTimer.Update();
-        if (healTimer.IsFinished && !healFlag)
+        if (healTimer == null)
         {
-            healTimer.Start();
-            healFlag = true;
+            Debug.LogError("healTimer is not initialized!");
+            return;
         }
+        healTimer.Update();
+        if (healTimer.IsFinished && !healFlag) healFlag = true;
+
     }
     private void ShootTimerUpdater()
     {
+        if (shootTimer == null)
+        {
+            Debug.LogError("shootTimer is not initialized!");
+            return;
+        }
         shootTimer.Update();
-        if (shootTimer.IsFinished) shootTimer.Start();
     }
+
     private void RegenChecker()
     {
         if (regenEnabled && health < maxHealth && healFlag)
@@ -111,8 +122,6 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     public bool IsLifestealEnabled() => lifestealEnabled;
     public void EnableLifesteal() => lifestealEnabled = true;
     public void DisableLifesteal() => lifestealEnabled = false;
-    public void EnablePierce() => pierceEnabled = true;
-    public void DisablePierce() => pierceEnabled = false;
     public bool IsRicochetEnabled() => ricochetEnabled;
     public void EnableRicochet() => ricochetEnabled = true;
     public void DisableRicochet() => ricochetEnabled = false;
@@ -145,9 +154,10 @@ public class Player : MonoBehaviour, IHasHealth, IBuffFriendly
     public void BuffSpeed(float speed) => this.speed += speed;
     public void SetShield(int shieldAmount) => shield = shieldAmount;
     public void BuffDamage(int damageAmount) => damage += damageAmount;
-    public void BuffPierce(bool pierce) => pierceEnabled = pierce;
+    public void BuffPierce(int pierce) => pierce += pierce;
     public void ResetSpeed() => speed = 5;
     public void ResetDamage() => damage = 1;
     public void ResetShield() => shield = 0;
-    public void ResetPierce() => pierceEnabled = false;
+    public void ResetPierce() => pierce = 1;
+
 }

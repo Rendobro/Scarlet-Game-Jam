@@ -51,33 +51,34 @@ public class Buff
         float defaultSpeedBuff = 3f;
         int defaultDamageBuff = 2;
         int defaultShieldBuff = 5;
+        int defaultPierceBuff = 1;
         switch (buffType)
         {
             case BuffType.Regen:
                 Player.Instance.EnableRegen();
                 break;
             case BuffType.Speed:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.BuffSpeed(defaultSpeedBuff);
                 }
                 break;
             case BuffType.Damage:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.BuffDamage(defaultDamageBuff);
                 }
                 break;
             case BuffType.Pierce:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
-                    target.BuffPierce(true);
+                    target.BuffPierce(defaultPierceBuff);
                 }
                 break;
             case BuffType.AOEAbility:
@@ -90,9 +91,9 @@ public class Buff
                 Player.Instance.EnableEnemyDebuff();
                 break;
             case BuffType.Shield:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.SetShield(defaultShieldBuff);
                 }
@@ -121,36 +122,36 @@ public class Buff
         switch (buffType)
         {
             case BuffType.Speed:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.BuffSpeed(strength);
                 }
                 break;
             case BuffType.Damage:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.BuffDamage((int)Mathf.Floor(strength));
                 }
                 break;
             case BuffType.Pierce:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
-                    target.BuffPierce(true);
+                    target.BuffPierce((int)Mathf.Floor(strength));
                 }
                 break;
             case BuffType.Lifesteal:
                 Player.Instance.EnableLifesteal();
                 break;
             case BuffType.Shield:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.SetShield((int)Mathf.Floor(strength));
                 }
@@ -170,25 +171,25 @@ public class Buff
                 Player.Instance.DisableRegen();
                 break;
             case BuffType.Speed:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.ResetSpeed();
                 }
                 break;
             case BuffType.Damage:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.ResetDamage();
                 }
                 break;
             case BuffType.Pierce:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.ResetPierce();
                 }
@@ -203,9 +204,9 @@ public class Buff
                 Player.Instance.DisableEnemyDebuff();
                 break;
             case BuffType.Shield:
-                foreach (IBuffFriendly target in GameObject
+                foreach (IBuffable target in GameObject
                 .FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .OfType<IBuffFriendly>())
+                .OfType<IBuffable>())
                 {
                     target.ResetShield();
                 }

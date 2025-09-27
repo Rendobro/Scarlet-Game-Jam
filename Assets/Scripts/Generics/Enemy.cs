@@ -8,7 +8,7 @@ public abstract class Enemy : MonoBehaviour, IHasHealth, IBuffable
     public virtual void BuffSpeed(float speedAmount) => Speed += speedAmount;
     public virtual void SetShield(int shieldAmount) => Shield += shieldAmount;
     public virtual void BuffDamage(int damageAmount) => Damage += damageAmount;
-    public virtual void BuffPierce(bool pierceAmount) => Pierce += damageAmount;
+    public virtual void BuffPierce(int pierceAmount) => Pierce += pierceAmount;
 
     // set these to their default values in the class
     public virtual void ResetSpeed() => Speed = 1f;
@@ -44,6 +44,7 @@ public abstract class Enemy : MonoBehaviour, IHasHealth, IBuffable
         Debug.Log("Enemy has died. Name: " + gameObject.name);
         Destroy(gameObject);
     }
+
     [SerializeField] protected int health = 20;
 
     // Enemy properties
